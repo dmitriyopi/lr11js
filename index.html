@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style20.css" rel="stylesheet">
+    <link rel="icon" href="learn.jfif" type="image">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let currentPos = 0;
+            let correct = 0;
+            let incorrect = 0;
+            const words = [
+                { word: "moon", translation: "місяць" },
+                { word: "light", translation: "світло" },
+                { word: "cat", translation: "кіт" },
+                { word: "house", translation: "дім" },
+                { word: "work", translation: "робота" },
+                { word: "pen", translation: "ручка" },
+                { word: "crown", translation: "корона" },
+                { word: "help", translation: "допомога" },
+                { word: "programming", translation: "програмування" },
+                { word: "laptop", translation: "ноутбук" }
+            ];
+            const shuffledWords = RandomCards(words);
+            $('#total').text(words.length);
+            function RandomCards(array) {
+                return array.sort(() => Math.random() - 0.5);
+            }
+
+            function Card(index) {
+             const cardContainer = $(".card-container");
+               cardContainer.empty();
+             if (index < shuffledWords.length) 
+             {
+                    const word = shuffledWords[index].word;
+                    const correctTranslation = shuffledWords[index].translation.toLowerCase();
+                 const card = $(`
+                 <div class="card">
+                 <p>${word}</p>
+                 <input type="text" class="translation-input" placeholder="Введіть переклад">
+                 <button class="check-btn">Перевірити</button>
+                 </div>
+                    `);
+                card.find(".check-btn").on("click", function () 
+                {
+                const userTranslation = card.find(".translation-input").val().trim().toLowerCase();
+
+                if (userTranslation === correctTranslation)
+                {
+                correct++;
+                alert("Вірно!");
+                } 
+                else 
+                {
+                incorrect++;
+                alert(`Невірно! Правильний переклад: ${correctTranslation}`);
+                }
+                currentPos++;
+                Update();
+                Card(currentPos);
+                });
+
+                    cardContainer.append(card);
+                } else {
+                    showResult();
+                }
+            }
+            function Update() {
+                $("#step").text(currentPos + 1);
+                $("#correct").text(correct);
+                $("#incorrect").text(incorrect);
+            }
+            function showResult() {
+                const score = Math.round((correct / words.length) * 10);
+                const resultMessage =
+                `
+                Ви закінчили гру!
+                Ваш рахунок: ${correct}/${words.length}.
+                Рівень знань: ${score}/10.
+                `;
+                alert(resultMessage);
+            }
+            Card(currentPos);
+        });
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Language Learning</h1>
+<div class="status">
+<p>Крок <span id="step">1</span> із <span id="total"></span></p>
+<p>Вірно: <span id="correct">0</span>, Невірно: <span id="incorrect">0</span></p>
+</div>
+<div class="card-container"></div>
+</div>
+</body>
+</html>
